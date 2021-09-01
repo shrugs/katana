@@ -18,7 +18,7 @@ const IndexPage = () => {
         <title>Divine Roles</title>
       </Head>
       <h1>Divine Roles</h1>
-      <div className="message">You must have Divine Robes to enter.</div>
+      <div className="message">You must have a Katana to enter.</div>
       {!account ? (
         <button
           onClick={() =>
@@ -27,11 +27,11 @@ const IndexPage = () => {
                 walletconnect: {
                   package: WalletConnectProvider,
                   options: {
-                    infuraId: 'b95f6330bfdd4f5d8960db9d1d3da676'
-                  }
-                }
+                    infuraId: 'b95f6330bfdd4f5d8960db9d1d3da676',
+                  },
+                },
               },
-              theme: 'dark'
+              theme: 'dark',
             })
           }
         >
@@ -42,8 +42,8 @@ const IndexPage = () => {
       )}
 
       <div className="links">
-        <a href="https://robes.market/" target="_blank">
-          Find Divine Robes for sale and check prices at robes.market.
+        <a href="https://weeb.market/" target="_blank" rel="noreferrer">
+          Find Katanas for sale and check prices at weeb.market.
         </a>
       </div>
       <style jsx>{`

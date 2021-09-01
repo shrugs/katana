@@ -1,9 +1,5 @@
 import prisma from '@server/helpers/prisma';
-import {
-  addToServer,
-  getAccessToken,
-  getProfile
-} from '@server/services/Discord';
+import { addToServer, getAccessToken, getProfile } from '@server/services/Discord';
 import { getBagsInWallet } from 'loot-sdk';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -20,14 +16,12 @@ const api = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // reconfirm user has permissions
   const bags = await getBagsInWallet(user.address.toLowerCase());
-  const filteredBags = bags.filter(bag =>
-    bag.chest.toLowerCase().includes('divine robe')
-  );
+  const filteredBags = bags.filter((bag) => bag.chest.toLowerCase().includes('divine robe'));
   if (!filteredBags.length) return res.redirect('/unauthorized');
 
   await prisma.user.update({
     where: { id: user.id },
-    data: { discordId: profile.id, inServer: true, username: profile.username }
+    data: { discordId: profile.id, inServer: true, username: profile.username },
   });
   await addToServer(profile.id, accessToken);
   return res.redirect('/welcome');

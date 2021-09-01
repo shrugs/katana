@@ -8,9 +8,7 @@ const IndexPage = () => {
         <title>Divine Roles</title>
       </Head>
       <h1>Divine Roles</h1>
-      <div className="message">
-        Welcome. You have been added to the Discord.
-      </div>
+      <div className="message">Welcome. You have been added to the Discord.</div>
       <style jsx>{`
         .index {
           padding: 20px;
