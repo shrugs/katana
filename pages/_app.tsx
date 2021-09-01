@@ -1,4 +1,5 @@
-import React from 'react';
+import '@styles/preflight.css';
+
 import type { AppProps } from 'next/app';
 import MainLayout from '@app/layouts/MainLayout';
 

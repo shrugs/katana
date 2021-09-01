@@ -3,13 +3,25 @@
     "target": "esnext",
     "baseUrl": ".",
     "paths": {
-      "@app/*": ["src/app/*"],
-      "@server/*": ["src/server/*"],
-      "@abis/*": ["src/abis/*"]
+      "@app/*": [
+        "app/*"
+      ],
+      "@server/*": [
+        "server/*"
+      ],
+      "@abis/*": [
+        "abis/*"
+      ],
+      "@styles/*": [
+        "styles/*"
+      ]
     },
     "module": "esnext",
     "jsx": "preserve",
-    "lib": ["dom", "es2017"],
+    "lib": [
+      "dom",
+      "es2017"
+    ],
     "moduleResolution": "node",
     "strict": true,
     "allowJs": true,
@@ -26,6 +38,15 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "exclude": ["dist", ".next", "out", "next.config.js"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "exclude": [
+    "dist",
+    ".next",
+    "out",
+    "next.config.js"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }
