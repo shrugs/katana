@@ -1,45 +1,109 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useWallet } from '@gimmixorg/use-wallet';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import useSignature from '@app/features/useSignature';
 import Head from 'next/head';
-import Router from 'next/router';
+import { signIn, useSession } from 'next-auth/client';
+import type { ICoreOptions } from 'web3modal';
+import { requestSignature } from '@lib/client/requestSignature';
+import { styled } from 'stitches.config';
+import useSWR from 'swr';
+
+const Button = styled('button', {
+  marginTop: '20px',
+  border: 'none',
+  outline: 'none',
+  color: 'white',
+  fontFamily: '$serif',
+  fontSize: '18px',
+  cursor: 'pointer',
+  backgroundColor: 'hsl(203, 18%, 19%)',
+  textDecoration: 'none',
+  padding: '10px 20px',
+  borderRadius: '5px',
+});
+
+const HEADERS = { Accept: 'application/json' };
+
+const WALLET_CONNECT_OPTIONS: Partial<ICoreOptions> = {
+  providerOptions: {
+    walletconnect: {
+      package: WalletConnectProvider,
+      options: {
+        infuraId: 'b95f6330bfdd4f5d8960db9d1d3da676',
+      },
+    },
+  },
+  theme: 'dark',
+};
+
+function submitEnterDiscord() {
+  return fetch('/api/verify', { method: 'POST' });
+}
+
+function submitEthereumAccount(body: { account: string; signature: string }) {
+  return fetch('/api/addEthereumAccount', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+}
 
 const IndexPage = () => {
-  const { connect, account } = useWallet();
-  const { promptSignature } = useSignature();
-  const verifyAndJoin = async () => {
-    const signature = await promptSignature();
-    Router.push(`/api/verify?account=${account}&signature=${signature}`);
-  };
+  const [session, loadingSession] = useSession();
+  const { connect, provider, account } = useWallet();
+
+  const { data, error, isValidating, mutate } = useSWR<{ accounts: { address: string }[] }>(
+    session && ['/api/getAccounts'],
+  );
+  console.log('getAccounts', data, error);
+
+  const { data: destinationData, error: destinationError } = useSWR<{
+    hasJoinedDestination: boolean;
+  }>(session && ['/api/hasJoinedDestination']);
+
+  console.log('destination', destinationData, destinationError);
+
+  const hasAddedEthereumAccount = data?.accounts?.length > 0;
+
+  const signAndAddEthereumAccount = useCallback(async () => {
+    if (!provider || !account) return;
+    const signature = await requestSignature(provider, account);
+    await submitEthereumAccount({ account, signature });
+    // run();
+  }, [account, provider]);
+
+  const enter = useCallback(async () => {
+    await submitEnterDiscord();
+  }, []);
+
+  function renderPrimaryAction() {
+    if (!session) return <Button onClick={() => signIn('discord')}>Sign in with Discord</Button>;
+    if (!hasAddedEthereumAccount) {
+      if (!account) {
+        return <Button onClick={() => connect(WALLET_CONNECT_OPTIONS)}>Connect Wallet</Button>;
+      }
+
+      return <Button onClick={signAndAddEthereumAccount}>Verify your Divine Role</Button>;
+    }
+
+    if (destinationData.hasJoinedDestination) {
+      return <div>You are in the katana garden, check discord.</div>;
+    }
+
+    return <Button onClick={enter}>Verify Katanas to Enter the Garden</Button>;
+  }
+
   return (
     <div className="index">
       <Head>
-        <title>Divine Roles</title>
+        <title>Katakana Garden</title>
       </Head>
-      <h1>Divine Roles</h1>
+      <h1>Katakana Garden</h1>
       <div className="message">You must have a Katana to enter.</div>
-      {!account ? (
-        <button
-          onClick={() =>
-            connect({
-              providerOptions: {
-                walletconnect: {
-                  package: WalletConnectProvider,
-                  options: {
-                    infuraId: 'b95f6330bfdd4f5d8960db9d1d3da676',
-                  },
-                },
-              },
-              theme: 'dark',
-            })
-          }
-        >
-          Connect Wallet
-        </button>
-      ) : (
-        <button onClick={verifyAndJoin}>Verify your Divine Role</button>
-      )}
+
+      {renderPrimaryAction()}
 
       <div className="links">
         <a href="https://weeb.market/" target="_blank" rel="noreferrer">

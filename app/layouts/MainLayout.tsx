@@ -8,10 +8,6 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
         <link href="/static/icon.png" rel="shortcut icon" />
       </Head>
       {children}
-      <style jsx>{`
-        .main-layout {
-        }
-      `}</style>
       <style jsx global>{`
         * {
           box-sizing: border-box;

@@ -1,5 +1,4 @@
-import { createCss } from '@stitches/react';
-import { defaultThemeMap } from '@stitches/react';
+import { createStitches, defaultThemeMap } from '@stitches/react';
 
 const space = {
   px: '1px',
@@ -76,7 +75,7 @@ const sizes = {
   max: 'max-content',
 };
 
-export const { styled, css, global, keyframes, getCssString, theme } = createCss({
+export const { styled, css, globalCss, keyframes, getCssText, theme } = createStitches({
   theme: {
     colors: {
       red: 'red',
@@ -212,55 +211,55 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
   },
   utils: {
     // SIZE
-    h: (config) => (value) => ({ height: value }),
-    w: (config) => (value) => ({ width: value }),
-    extent: (config) => (value) => ({ height: value, width: value }),
+    h: (_config) => (value) => ({ height: value }),
+    w: (_config) => (value) => ({ width: value }),
+    extent: (_config) => (value) => ({ height: value, width: value }),
 
     // MARGIN
-    m: (config) => (value) => ({
+    m: (_config) => (value) => ({
       marginTop: value,
       marginBottom: value,
       marginLeft: value,
       marginRight: value,
     }),
-    mt: (config) => (value) => ({ marginTop: value }),
-    mr: (config) => (value) => ({ marginRight: value }),
-    mb: (config) => (value) => ({ marginBottom: value }),
-    ml: (config) => (value) => ({ marginLeft: value }),
-    mx: (config) => (value) => ({ marginLeft: value, marginRight: value }),
-    my: (config) => (value) => ({ marginTop: value, marginBottom: value }),
+    mt: (_config) => (value) => ({ marginTop: value }),
+    mr: (_config) => (value) => ({ marginRight: value }),
+    mb: (_config) => (value) => ({ marginBottom: value }),
+    ml: (_config) => (value) => ({ marginLeft: value }),
+    mx: (_config) => (value) => ({ marginLeft: value, marginRight: value }),
+    my: (_config) => (value) => ({ marginTop: value, marginBottom: value }),
 
     // PADDING
-    p: (config) => (value) => ({
+    p: (_config) => (value) => ({
       paddingTop: value,
       paddingBottom: value,
       paddingLeft: value,
       paddingRight: value,
     }),
-    pt: (config) => (value) => ({ paddingTop: value }),
-    pr: (config) => (value) => ({ paddingRight: value }),
-    pb: (config) => (value) => ({ paddingBottom: value }),
-    pl: (config) => (value) => ({ paddingLeft: value }),
-    px: (config) => (value) => ({ paddingLeft: value, paddingRight: value }),
-    py: (config) => (value) => ({ paddingTop: value, paddingBottom: value }),
+    pt: (_config) => (value) => ({ paddingTop: value }),
+    pr: (_config) => (value) => ({ paddingRight: value }),
+    pb: (_config) => (value) => ({ paddingBottom: value }),
+    pl: (_config) => (value) => ({ paddingLeft: value }),
+    px: (_config) => (value) => ({ paddingLeft: value, paddingRight: value }),
+    py: (_config) => (value) => ({ paddingTop: value, paddingBottom: value }),
 
     // SPACING
-    sx: (config) => (value) => ({
+    sx: (_config) => (value) => ({
       '& > * + *': { marginLeft: value },
     }),
-    sy: (config) => (value) => ({
+    sy: (_config) => (value) => ({
       '& > * + *': { marginTop: value },
     }),
 
     // LAYOUT
-    row: (config) => () => ({ display: 'flex', flexDirection: 'row' }),
-    col: (config) => () => ({ display: 'flex', flexDirection: 'column' }),
+    row: (_config) => () => ({ display: 'flex', flexDirection: 'row' }),
+    col: (_config) => () => ({ display: 'flex', flexDirection: 'column' }),
 
     // BACKGROUND
-    bg: (config) => (value) => ({ background: value }),
+    bg: (_config) => (value) => ({ background: value }),
 
     // CORNERS
-    rounded: (config) => (value) => ({ borderRadius: value }),
+    rounded: (_config) => (value) => ({ borderRadius: value }),
   },
   themeMap: {
     ...defaultThemeMap,

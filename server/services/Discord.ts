@@ -1,52 +1,8 @@
-export const getProfile = async (
-  accessToken: string,
-): Promise<{
-  id: string;
-  username: string;
-  avatar: string | null;
-  discriminator: string;
-}> => {
-  const { user } = await fetch('https://discord.com/api/oauth2/@me', {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  }).then((res) => res.json());
-  return user;
-};
-
-export const getAccessToken = async (code: string) => {
-  const body = {
-    client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
-    client_secret: process.env.DISCORD_CLIENT_SECRET,
-    redirect_uri: process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI,
-    grant_type: 'authorization_code',
-    scope: 'identify guilds.join',
-    code,
-  };
-  const response = await fetch('https://discord.com/api/oauth2/token', {
-    method: 'post',
-    body: Object.keys(body)
-      .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent((body as any)[key]))
-      .join('&'),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-    },
-  }).then((res) => res.json());
-  return (response?.access_token as string) || null;
-};
-
-export const getLoginURL = (state: string) =>
-  `https://discord.com/api/oauth2/authorize?client_id=${
-    process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID as string
-  }&redirect_uri=${encodeURIComponent(
-    process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI as string,
-  )}&response_type=code&scope=identify%20guilds.join&state=${state}`;
-
 export const addToServer = async (userID: string, accessToken: string) => {
   const body = {
     access_token: accessToken,
   };
-  await fetch(
+  return await fetch(
     `https://discord.com/api/v8/guilds/${
       process.env.DISCORD_SERVER_ID as string
     }/members/${userID}`,
@@ -54,7 +10,7 @@ export const addToServer = async (userID: string, accessToken: string) => {
       method: 'PUT',
       body: JSON.stringify(body),
       headers: {
-        Authorization: `Bot ${process.env.DISCORD_CLIENT_TOKEN}`,
+        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
         'Content-Type': 'application/json',
       },
     },
@@ -64,15 +20,30 @@ export const addToServer = async (userID: string, accessToken: string) => {
   });
 };
 
+export const getFromServer = async (userID: string) => {
+  return await fetch(
+    `https://discord.com/api/v8/guilds/${
+      process.env.DISCORD_SERVER_ID as string
+    }/members/${userID}`,
+    {
+      method: 'GET',
+      headers: {
+        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    },
+  ).then((res) => res.json());
+};
+
 export const removeFromServer = async (userID: string) => {
-  await fetch(
+  return await fetch(
     `https://discord.com/api/v8/guilds/${
       process.env.DISCORD_SERVER_ID as string
     }/members/${userID}`,
     {
       method: 'DELETE',
       headers: {
-        Authorization: `Bot ${process.env.DISCORD_CLIENT_TOKEN}`,
+        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
         'Content-Type': 'application/json',
       },
     },
@@ -88,7 +59,7 @@ export const getRolesForUser = async (userId: string) => {
     {
       method: 'GET',
       headers: {
-        Authorization: `Bot ${process.env.DISCORD_CLIENT_TOKEN}`,
+        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
         'Content-Type': 'application/json',
       },
     },
@@ -101,7 +72,7 @@ export const setRolesForUser = async (roles: string[], userID: string) => {
     {
       method: 'PATCH',
       headers: {
-        Authorization: `Bot ${process.env.DISCORD_CLIENT_TOKEN}`,
+        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ roles }),
@@ -114,7 +85,7 @@ export const addRoleForUser = async (roleId: string, userID: string) => {
     {
       method: 'PUT',
       headers: {
-        Authorization: `Bot ${process.env.DISCORD_CLIENT_TOKEN}`,
+        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
         'Content-Type': 'application/json',
       },
     },
@@ -126,7 +97,7 @@ export const removeRoleForUser = async (roleId: string, userID: string) => {
     {
       method: 'DELETE',
       headers: {
-        Authorization: `Bot ${process.env.DISCORD_CLIENT_TOKEN}`,
+        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
         'Content-Type': 'application/json',
       },
     },
@@ -138,20 +109,20 @@ export const RolesToIDs: Record<string, string> = {
   'Katana': '882674757525467167',
   'Katana of Power': '882674815000006666',
   'Katana of Detection': '882675234396848149',
-  'Katana of Perfection': '881425839076573185',
-  'Katana of Reflection': '881425866977079346',
-  'Katana of Fury': '881425900963528714',
-  'Katana of Vitriol': '881425925919604737',
-  'Katana of Rage': '881425956395446272',
-  'Katana of the Fox': '881425974288326676',
-  'Katana of Skill': '881425995024973834',
-  'Katana of Brilliance': '881426015262490654',
-  'Katana of Titans': '881426035642626048',
-  'Katana of Protection': '881426056974843914',
-  'Katana of Enlightenment': '881426082497179659',
-  'Katana of the Twins': '881426115959349269',
-  'Katana of Anger': '881426135961980979',
-  'Katana of Giants': '881427638386827274',
+  'Katana of Perfection': '882675394531188787',
+  'Katana of Reflection': '882675435597602886',
+  'Katana of Fury': '882675474575286352',
+  'Katana of Vitriol': '882675531257102397',
+  'Katana of Rage': '882675576886943804',
+  'Katana of the Fox': '882675612467220490',
+  'Katana of Skill': '882675648643092553',
+  'Katana of Brilliance': '882675691177521182',
+  'Katana of Titans': '882675735280640100',
+  'Katana of Protection': '882675772597346335',
+  'Katana of Enlightenment': '882675820320145428',
+  'Katana of the Twins': '882675858094063616',
+  'Katana of Anger': '882675894995533845',
+  'Katana of Giants': '882675927040024637',
 };
 
-export const AdminRoleID = '881277625820127232';
+export const AdminRoleID = '882637635976302632';
