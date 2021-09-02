@@ -8,7 +8,7 @@ export default NextAuth({
     Providers.Discord({
       clientId: process.env.DISCORD_CLIENT_ID,
       clientSecret: process.env.DISCORD_CLIENT_SECRET,
-      scope: ['identify'],
+      scope: 'identify guilds.join',
     }),
   ],
   adapter: PrismaAdapter(prisma),
