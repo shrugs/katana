@@ -16,5 +16,7 @@ export default async function hasJoinedDestination(req: NextApiRequest, res: Nex
 
   const hasJoinedDestination = await isInDiscord(account.providerAccountId);
 
+  res.setHeader('Cache-Control', 's-maxage=10');
+
   return res.json({ hasJoinedDestination });
 }
