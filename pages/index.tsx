@@ -28,9 +28,9 @@ const IndexPage = () => {
         <Link href="/katana" passHref>
           <Button as="a">Join the Katana Garden Discord</Button>
         </Link>
-        <Link href="/lootwars" passHref>
+        {/* <Link href="/lootwars" passHref>
           <Button as="a">Join the Loot Wars Discord</Button>
-        </Link>
+        </Link> */}
       </Box>
     </Box>
   );
