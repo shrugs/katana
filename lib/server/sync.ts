@@ -2,7 +2,6 @@ import prisma from '@server/helpers/prisma';
 import {
   addRoleForUser,
   addToServer,
-  AdminRoleID,
   getRolesForUser,
   removeFromServer,
   removeRoleForUser,
@@ -10,6 +9,8 @@ import {
 } from '@server/services/Discord';
 import { getBagsInWallet } from 'loot-sdk';
 import { isInDiscord } from './presence';
+
+const relevantRoleIDs = Object.values(RolesToIDs);
 
 export async function syncForUser(userId: string) {
   const { address } = await prisma.ethereumAccount.findFirst({ where: { userId } });
@@ -68,18 +69,17 @@ export async function syncForUser(userId: string) {
     const { roles: existingRoleIds }: { roles: string[] } = await getRolesForUser(
       discordAccount.providerAccountId,
     );
-    const toRemove = existingRoleIds?.filter((x) => !newRoleIds?.includes(x)) || [];
-    const toAdd = newRoleIds?.filter((x) => !existingRoleIds?.includes(x)) || [];
+    const existingItemRoles = existingRoleIds.filter((id) => relevantRoleIDs.includes(id));
+    const toRemove = existingItemRoles?.filter((x) => !newRoleIds?.includes(x)) || [];
+    const toAdd = newRoleIds?.filter((x) => !existingItemRoles?.includes(x)) || [];
 
     for (const roleId of toRemove) {
-      if (roleId == AdminRoleID) continue;
       await new Promise((resolve) => setTimeout(resolve, 100));
       console.log('Removing role for user', roleId, discordAccount.providerAccountId);
       await removeRoleForUser(roleId, discordAccount.providerAccountId);
     }
 
     for (const roleId of toAdd) {
-      if (roleId == AdminRoleID) continue;
       await new Promise((resolve) => setTimeout(resolve, 100));
       console.log('Adding role', roleId, 'to user', discordAccount.providerAccountId);
       await addRoleForUser(roleId, discordAccount.providerAccountId);
