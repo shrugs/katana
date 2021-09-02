@@ -34,7 +34,7 @@ function Dashboard() {
       {!session && (
         <>
           Not signed in <br />
-          <button onClick={() => signIn()}>Sign in</button>
+          <button onClick={() => signIn('discord')}>Sign in</button>
         </>
       )}
       {session && (

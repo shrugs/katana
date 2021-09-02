@@ -57,13 +57,14 @@ const IndexPage = () => {
   const { data, error, isValidating, mutate } = useSWR<{ accounts: { address: string }[] }>(
     session && ['/api/getAccounts'],
   );
-  console.log('getAccounts', data, error);
 
-  const { data: destinationData, error: destinationError } = useSWR<{
+  const {
+    data: presenceData,
+    error: presenceError,
+    mutate: mutatePresence,
+  } = useSWR<{
     hasJoinedDestination: boolean;
   }>(session && ['/api/hasJoinedDestination']);
-
-  console.log('destination', destinationData, destinationError);
 
   const hasAddedEthereumAccount = data?.accounts?.length > 0;
 
@@ -71,12 +72,13 @@ const IndexPage = () => {
     if (!provider || !account) return;
     const signature = await requestSignature(provider, account);
     await submitEthereumAccount({ account, signature });
-    // run();
-  }, [account, provider]);
+    mutate();
+  }, [account, provider, mutate]);
 
   const enter = useCallback(async () => {
     await submitEnterDiscord();
-  }, []);
+    mutatePresence();
+  }, [mutatePresence]);
 
   function renderPrimaryAction() {
     if (!session) return <Button onClick={() => signIn('discord')}>Sign in with Discord</Button>;
@@ -85,10 +87,10 @@ const IndexPage = () => {
         return <Button onClick={() => connect(WALLET_CONNECT_OPTIONS)}>Connect Wallet</Button>;
       }
 
-      return <Button onClick={signAndAddEthereumAccount}>Verify your Divine Role</Button>;
+      return <Button onClick={signAndAddEthereumAccount}>Verify your Address</Button>;
     }
 
-    if (destinationData.hasJoinedDestination) {
+    if (presenceData?.hasJoinedDestination) {
       return <div>You are in the katana garden, check discord.</div>;
     }
 
@@ -98,9 +100,9 @@ const IndexPage = () => {
   return (
     <div className="index">
       <Head>
-        <title>Katakana Garden</title>
+        <title>Katana Garden</title>
       </Head>
-      <h1>Katakana Garden</h1>
+      <h1>Katana Garden</h1>
       <div className="message">You must have a Katana to enter.</div>
 
       {renderPrimaryAction()}

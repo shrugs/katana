@@ -19,55 +19,7 @@ const api: NextApiHandler = async (_req, res) => {
   //   },
   // });
   // for (const user of usersToRefresh) {
-  //   const bags = await getBagsInWallet(user.address.toLowerCase());
-  //   const filteredBags = bags.filter((bag) => bag.chest.toLowerCase().includes('divine robe'));
-  //   console.log(
-  //     `${user.address} has ${filteredBags.length} katanas: (${filteredBags
-  //       .map((bag) => bag.chest)
-  //       .join(', ')})`,
-  //   );
-  //   if (filteredBags.length == 0 && user.inServer) {
-  //     await prisma.user.update({
-  //       where: { id: user.id },
-  //       data: { lastChecked: new Date(), inServer: false, katanas: [] },
-  //     });
-  //     try {
-  //       console.log(`Removing ${user.address} from server`);
-  //       await removeFromServer(user.id);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   } else {
-  //     await prisma.user.update({
-  //       where: { id: user.id },
-  //       data: {
-  //         lastChecked: new Date(),
-  //         inServer: true,
-  //         katanas: filteredBags.map((bag) => bag.chest),
-  //       },
-  //     });
-  //     if (user.discordId && user.inServer) {
-  //       const newRoleIds = filteredBags.map((bag) => bag.chest).map((name) => RolesToIDs[name]);
-  //       const { roles: existingRoleIds }: { roles: string[] } = await getRolesForUser(
-  //         user.discordId,
-  //       );
-  //       const toRemove = existingRoleIds?.filter((x) => !newRoleIds?.includes(x)) || [];
-  //       const toAdd = newRoleIds?.filter((x) => !existingRoleIds?.includes(x)) || [];
-  //       for (const roleId of toRemove) {
-  //         if (roleId == AdminRoleID) continue;
-  //         await new Promise((resolve) => setTimeout(resolve, 100));
-  //         console.log('Removing role for user', roleId, user.discordId);
-  //         await removeRoleForUser(roleId, user.discordId);
-  //       }
-  //       for (const roleId of toAdd) {
-  //         if (roleId == AdminRoleID) continue;
-  //         await new Promise((resolve) => setTimeout(resolve, 100));
-  //         console.log('Adding role for user', roleId, user.discordId);
-  //         await addRoleForUser(roleId, user.discordId);
-  //       }
-  //     }
-  //   }
-  // }
+
   return res.json({ success: true });
 };
 

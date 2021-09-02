@@ -1,107 +1,90 @@
-export const addToServer = async (userID: string, accessToken: string) => {
-  const body = {
-    access_token: accessToken,
-  };
-  return await fetch(
-    `https://discord.com/api/v8/guilds/${
-      process.env.DISCORD_SERVER_ID as string
-    }/members/${userID}`,
-    {
-      method: 'PUT',
-      body: JSON.stringify(body),
-      headers: {
-        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
+const discordFetch = async (url: string, options?: RequestInit) => {
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+      'Content-Type': 'application/json',
     },
-  ).then((res) => {
-    if (res.status == 201) return res.json();
-    else return res.text();
   });
+
+  if (options.method === 'PUT') {
+    return;
+  }
+
+  try {
+    const data = await res.json();
+    if (res.status >= 400) throw new Error(`${data.code} ${data.message}`);
+    return data;
+  } catch (error) {
+    throw new Error(res.statusText);
+  }
 };
 
 export const getFromServer = async (userID: string) => {
-  return await fetch(
+  return discordFetch(
     `https://discord.com/api/v8/guilds/${
       process.env.DISCORD_SERVER_ID as string
     }/members/${userID}`,
     {
       method: 'GET',
-      headers: {
-        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
     },
-  ).then((res) => res.json());
+  );
+};
+
+export const addToServer = async (userID: string, accessToken: string) => {
+  return discordFetch(
+    `https://discord.com/api/v8/guilds/${
+      process.env.DISCORD_SERVER_ID as string
+    }/members/${userID}`,
+    {
+      method: 'PUT',
+      body: JSON.stringify({ access_token: accessToken }),
+    },
+  );
 };
 
 export const removeFromServer = async (userID: string) => {
-  return await fetch(
+  return discordFetch(
     `https://discord.com/api/v8/guilds/${
       process.env.DISCORD_SERVER_ID as string
     }/members/${userID}`,
     {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
     },
-  ).then((res) => {
-    if (res.status == 201) return res.json();
-    else return res.text();
-  });
+  );
 };
 
 export const getRolesForUser = async (userId: string) => {
-  return await fetch(
+  return discordFetch(
     `https://discord.com/api/v8/guilds/${process.env.DISCORD_SERVER_ID}/members/${userId}`,
-    {
-      method: 'GET',
-      headers: {
-        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-    },
-  ).then((res) => res.json());
+    { method: 'GET' },
+  );
 };
 
 export const setRolesForUser = async (roles: string[], userID: string) => {
-  await fetch(
+  return discordFetch(
     `https://discord.com/api/v8/guilds/${process.env.DISCORD_SERVER_ID}/members/${userID}`,
     {
       method: 'PATCH',
-      headers: {
-        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({ roles }),
     },
-  ).then((res) => res.json());
+  );
 };
 export const addRoleForUser = async (roleId: string, userID: string) => {
-  await fetch(
+  return discordFetch(
     `https://discord.com/api/v8/guilds/${process.env.DISCORD_SERVER_ID}/members/${userID}/roles/${roleId}`,
     {
       method: 'PUT',
-      headers: {
-        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
     },
-  ).then((res) => res.text());
+  );
 };
 export const removeRoleForUser = async (roleId: string, userID: string) => {
-  await fetch(
+  await discordFetch(
     `https://discord.com/api/v8/guilds/${process.env.DISCORD_SERVER_ID}/members/${userID}/roles/${roleId}`,
     {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
     },
-  ).then((res) => res.text());
+  );
 };
 
 export const RolesToIDs: Record<string, string> = {
