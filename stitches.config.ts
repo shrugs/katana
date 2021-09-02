@@ -1,4 +1,5 @@
 import { createStitches, defaultThemeMap } from '@stitches/react';
+import type * as Stitches from '@stitches/react';
 
 const space = {
   px: '1px',
@@ -77,10 +78,7 @@ const sizes = {
 
 export const { styled, css, globalCss, keyframes, getCssText, theme } = createStitches({
   theme: {
-    colors: {
-      red: 'red',
-      blue: 'blue',
-    },
+    colors: {},
     space,
     sizes: {
       ...space,
@@ -211,55 +209,56 @@ export const { styled, css, globalCss, keyframes, getCssText, theme } = createSt
   },
   utils: {
     // SIZE
-    h: (_config) => (value) => ({ height: value }),
-    w: (_config) => (value) => ({ width: value }),
-    extent: (_config) => (value) => ({ height: value, width: value }),
+    h: (value: Stitches.ScaleValue<'size'>) => ({ height: value }),
+    w: (value: Stitches.ScaleValue<'size'>) => ({ width: value }),
+    extent: (value: Stitches.ScaleValue<'size'>) => ({ height: value, width: value }),
 
     // MARGIN
-    m: (_config) => (value) => ({
+    m: (value: Stitches.ScaleValue<'space'>) => ({
       marginTop: value,
       marginBottom: value,
       marginLeft: value,
       marginRight: value,
     }),
-    mt: (_config) => (value) => ({ marginTop: value }),
-    mr: (_config) => (value) => ({ marginRight: value }),
-    mb: (_config) => (value) => ({ marginBottom: value }),
-    ml: (_config) => (value) => ({ marginLeft: value }),
-    mx: (_config) => (value) => ({ marginLeft: value, marginRight: value }),
-    my: (_config) => (value) => ({ marginTop: value, marginBottom: value }),
+    mt: (value: Stitches.ScaleValue<'space'>) => ({ marginTop: value }),
+    mr: (value: Stitches.ScaleValue<'space'>) => ({ marginRight: value }),
+    mb: (value: Stitches.ScaleValue<'space'>) => ({ marginBottom: value }),
+    ml: (value: Stitches.ScaleValue<'space'>) => ({ marginLeft: value }),
+    mx: (value: Stitches.ScaleValue<'space'>) => ({ marginLeft: value, marginRight: value }),
+    my: (value: Stitches.ScaleValue<'space'>) => ({ marginTop: value, marginBottom: value }),
 
     // PADDING
-    p: (_config) => (value) => ({
+    p: (value: Stitches.ScaleValue<'space'>) => ({
       paddingTop: value,
       paddingBottom: value,
       paddingLeft: value,
       paddingRight: value,
     }),
-    pt: (_config) => (value) => ({ paddingTop: value }),
-    pr: (_config) => (value) => ({ paddingRight: value }),
-    pb: (_config) => (value) => ({ paddingBottom: value }),
-    pl: (_config) => (value) => ({ paddingLeft: value }),
-    px: (_config) => (value) => ({ paddingLeft: value, paddingRight: value }),
-    py: (_config) => (value) => ({ paddingTop: value, paddingBottom: value }),
+    pt: (value: Stitches.ScaleValue<'space'>) => ({ paddingTop: value }),
+    pr: (value: Stitches.ScaleValue<'space'>) => ({ paddingRight: value }),
+    pb: (value: Stitches.ScaleValue<'space'>) => ({ paddingBottom: value }),
+    pl: (value: Stitches.ScaleValue<'space'>) => ({ paddingLeft: value }),
+    px: (value: Stitches.ScaleValue<'space'>) => ({ paddingLeft: value, paddingRight: value }),
+    py: (value: Stitches.ScaleValue<'space'>) => ({ paddingTop: value, paddingBottom: value }),
 
     // SPACING
-    sx: (_config) => (value) => ({
+    sx: (value: Stitches.ScaleValue<'space'>) => ({
       '& > * + *': { marginLeft: value },
     }),
-    sy: (_config) => (value) => ({
+    sy: (value: Stitches.ScaleValue<'space'>) => ({
       '& > * + *': { marginTop: value },
     }),
 
     // LAYOUT
-    row: (_config) => () => ({ display: 'flex', flexDirection: 'row' }),
-    col: (_config) => () => ({ display: 'flex', flexDirection: 'column' }),
+    row: () => ({ display: 'flex', flexDirection: 'row' }),
+    col: () => ({ display: 'flex', flexDirection: 'column' }),
 
     // BACKGROUND
-    bg: (_config) => (value) => ({ background: value }),
+    bg: (value: Stitches.PropertyValue<'background'>) => ({ background: value }),
 
     // CORNERS
-    rounded: (_config) => (value) => ({ borderRadius: value }),
+    rounded: (value: Stitches.PropertyValue<'borderRadius'>) => ({ borderRadius: value }),
+    shadow: (value: Stitches.PropertyValue<'boxShadow'>) => ({ boxShadow: value }),
   },
   themeMap: {
     ...defaultThemeMap,

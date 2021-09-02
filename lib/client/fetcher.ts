@@ -1,2 +1,2 @@
-export const fetcher = (input: RequestInfo, init?: RequestInit) =>
-  fetch(input, init).then((res) => res.json());
+export const fetcher = (input: RequestInfo, body?: Record<string, any>) =>
+  fetch(`${input}?${new URLSearchParams(body)}`).then((res) => res.json());

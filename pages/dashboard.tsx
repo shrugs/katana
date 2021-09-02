@@ -1,11 +1,9 @@
+import { Box } from '@app/components/Box';
 import { useWallet } from '@gimmixorg/use-wallet';
 import { SIGNATURE_TEXT } from '@lib/constants';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { signIn, signOut, useSession } from 'next-auth/client';
 import { useCallback } from 'react';
-import { styled } from 'stitches.config';
-
-const Box = styled('div', {});
 
 function submitEthereumAccount(body: { account: string; signature: string }) {
   return fetch('/api/addEthereumAccount', {

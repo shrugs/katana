@@ -1,12 +1,13 @@
 import '@styles/preflight.css';
 
 import type { AppProps } from 'next/app';
-import MainLayout from '@app/layouts/MainLayout';
+import { MainLayout } from '@app/layouts/MainLayout';
 import { Provider as NextAuthProvider } from 'next-auth/client';
 import nest from '@lib/nest';
 import { PropsWithChildren } from 'react';
 import { SWRConfig } from 'swr';
 import { fetcher } from '@lib/client/fetcher';
+import Head from 'next/head';
 
 type KatanaAppProps = AppProps<{}>;
 
@@ -20,9 +21,15 @@ const Layout = nest([
 
 function App({ Component, pageProps }: KatanaAppProps) {
   return (
-    <Layout pageProps={pageProps}>
-      <Component {...pageProps} />
-    </Layout>
+    <>
+      <Head>
+        <title>Katana Garden</title>
+      </Head>
+
+      <Layout pageProps={pageProps}>
+        <Component {...pageProps} />
+      </Layout>
+    </>
   );
 }
 

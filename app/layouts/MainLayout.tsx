@@ -1,31 +1,30 @@
-import Head from 'next/head';
-import React, { ReactNode } from 'react';
+import { PropsWithChildren } from 'react';
+import { styled } from 'stitches.config';
 
-const MainLayout = ({ children }: { children: ReactNode }) => {
+const Container = styled('div', {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '$screenh',
+});
+
+const Main = styled('main', {
+  flex: 1,
+  width: '$full',
+  maxWidth: '$96',
+  height: '$128',
+  maxHeight: '100%',
+  rounded: '$xl',
+  shadow: '$xl',
+
+  display: 'flex',
+  flexDirection: 'row',
+});
+
+export function MainLayout({ children }: PropsWithChildren<{}>) {
   return (
-    <div className="main-layout">
-      <Head>
-        <link href="/static/icon.png" rel="shortcut icon" />
-      </Head>
-      {children}
-      <style jsx global>{`
-        * {
-          box-sizing: border-box;
-        }
-        html,
-        body {
-          font-family: serif;
-          margin: 0;
-          padding: 0;
-          background-color: black;
-          color: white;
-        }
-        a {
-          color: inherit;
-        }
-      `}</style>
-    </div>
+    <Container>
+      <Main>{children}</Main>
+    </Container>
   );
-};
-
-export default MainLayout;
+}

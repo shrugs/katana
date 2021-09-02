@@ -13,7 +13,7 @@ const api: NextApiHandler = async (_req, res) => {
   });
 
   for (const user of usersToRefresh) {
-    await syncForUser(user.id);
+    await syncForUser(user.id, 'katana');
   }
 
   return res.json({ success: true });

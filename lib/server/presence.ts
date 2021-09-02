@@ -1,8 +1,8 @@
 import { getFromServer } from '@server/services/Discord';
 
-export async function isInDiscord(discordId: string) {
+export async function isInDiscord(guildId: string, discordId: string) {
   try {
-    await getFromServer(discordId);
+    await getFromServer(guildId, discordId);
     return true;
   } catch (error) {
     return false;
