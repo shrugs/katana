@@ -8,6 +8,8 @@ const discordFetch = async (url: string, options?: RequestInit) => {
   });
 
   if (options.method === 'PUT') {
+    const message = await res.text();
+    if (res.status >= 400) throw new Error(`${res.status} ${res.statusText} ${message}`);
     return;
   }
 
