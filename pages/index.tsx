@@ -91,7 +91,12 @@ const IndexPage = () => {
     }
 
     if (presenceData?.hasJoinedDestination) {
-      return <div>You are in the katana garden, check discord.</div>;
+      return (
+        <div>
+          <div>You are in the katana garden, check discord.</div>
+          <Button onClick={enter}>Refresh your Katana Roles</Button>
+        </div>
+      );
     }
 
     return <Button onClick={enter}>Verify Katanas to Enter the Garden</Button>;
@@ -103,6 +108,7 @@ const IndexPage = () => {
         <title>Katana Garden</title>
       </Head>
       <h1>Katana Garden</h1>
+
       <div className="message">You must have a Katana to enter.</div>
 
       {renderPrimaryAction()}
