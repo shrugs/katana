@@ -63,8 +63,6 @@ export function JoinPage({ title }: { title: string }) {
     hasJoinedDestination: boolean;
   }>(session && ['/api/hasJoinedDestination', slugdata]);
 
-  console.log(presenceData, presenceError);
-
   const hasAddedEthereumAccount = data?.accounts?.length > 0;
 
   const signAndAddEthereumAccount = useCallback(async () => {
