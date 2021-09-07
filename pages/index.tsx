@@ -1,6 +1,6 @@
-import { Paragraph, Title } from '@app/components/Typography';
-import { Button } from '@app/components/Button';
-import { Box } from '@app/components/Box';
+import { Paragraph, Title } from '@app/elements/Typography';
+import { Button } from '@app/elements/Button';
+import { Box } from '@app/elements/Box';
 import Link from 'next/link';
 
 const IndexPage = () => {

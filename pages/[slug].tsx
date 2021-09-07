@@ -1,16 +1,19 @@
 import { GetServerSideProps } from 'next';
-import { ComponentPropsWithoutRef, useMemo, useCallback } from 'react';
+import { ComponentPropsWithoutRef, useMemo, useCallback, useState } from 'react';
 import { useWallet } from '@gimmixorg/use-wallet';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { signIn, useSession } from 'next-auth/client';
 import type { ICoreOptions } from 'web3modal';
 import { requestSignature } from '@lib/client/requestSignature';
 import useSWR from 'swr';
-import { Button } from '@app/components/Button';
-import { Box } from '@app/components/Box';
-import { Paragraph, Title } from '@app/components/Typography';
+import { Button } from '@app/elements/Button';
+import { Box } from '@app/elements/Box';
+import { Paragraph, Title } from '@app/elements/Typography';
 import { useRouter } from 'next/dist/client/router';
 import { AllCollections } from '@lib/collections/AllCollections';
+import { styled } from 'stitches.config';
+
+const ErrorText = styled(Paragraph, { color: 'Red' });
 
 const WALLET_CONNECT_OPTIONS: Partial<ICoreOptions> = {
   providerOptions: {
@@ -24,7 +27,7 @@ const WALLET_CONNECT_OPTIONS: Partial<ICoreOptions> = {
   theme: 'dark',
 };
 
-function submitEnterDiscord(body: { slug: string }) {
+function doSync(body: { slug: string }) {
   return fetch('/api/sync', {
     method: 'POST',
     headers: {
@@ -50,20 +53,24 @@ export function JoinPage({ title }: { title: string }) {
   const [session, loadingSession] = useSession();
   const { connect, provider, account } = useWallet();
 
-  const { data, error, isValidating, mutate } = useSWR<{ accounts: { address: string }[] }>(
-    session && ['/api/getAccounts'],
-  );
+  const {
+    data: accountsData,
+    error: accountsError,
+    isValidating: isValidatingAccounts,
+    mutate,
+  } = useSWR<{ accounts: { address: string }[] }>(session && ['/api/getAccounts']);
 
   const slugdata = useMemo(() => ({ slug }), [slug]);
   const {
     data: presenceData,
     error: presenceError,
+    isValidating: isValidatingPresence,
     mutate: mutatePresence,
   } = useSWR<{
     hasJoinedDestination: boolean;
   }>(session && ['/api/hasJoinedDestination', slugdata]);
 
-  const hasAddedEthereumAccount = data?.accounts?.length > 0;
+  const hasAddedEthereumAccount = accountsData?.accounts?.length > 0;
 
   const signAndAddEthereumAccount = useCallback(async () => {
     if (!provider || !account) return;
@@ -72,13 +79,36 @@ export function JoinPage({ title }: { title: string }) {
     mutate();
   }, [account, provider, mutate]);
 
+  const [syncing, setLoading] = useState(false);
+  const [syncError, setError] = useState<Error>();
   const enter = useCallback(async () => {
-    await submitEnterDiscord({ slug });
-    mutatePresence();
+    setError(undefined);
+    setLoading(true);
+    try {
+      await doSync({ slug });
+      mutatePresence();
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
   }, [mutatePresence, slug]);
 
+  const error = accountsError ?? presenceError ?? syncError;
+
   function renderPrimaryAction() {
-    if (!session) return <Button onClick={() => signIn('discord')}>Sign in with Discord</Button>;
+    if (!session) {
+      return (
+        <Button
+          onClick={() => signIn('discord')}
+          disabled={loadingSession}
+          loading={loadingSession}
+        >
+          Sign in with Discord
+        </Button>
+      );
+    }
+
     if (!hasAddedEthereumAccount) {
       if (!account) {
         return <Button onClick={() => connect(WALLET_CONNECT_OPTIONS)}>Connect Wallet</Button>;
@@ -90,13 +120,19 @@ export function JoinPage({ title }: { title: string }) {
     if (presenceData?.hasJoinedDestination) {
       return (
         <div>
-          <div>You&apos;re in! Check discord 👀</div>
-          <Button onClick={enter}>Refresh your Roles</Button>
+          <Paragraph css={{ textAlign: 'center' }}>You&apos;re in! Check Discord 👀</Paragraph>
+          <Button onClick={enter} loading={syncing} disabled={syncing}>
+            Refresh your Roles
+          </Button>
         </div>
       );
     }
 
-    return <Button onClick={enter}>Verify Loot to Enter</Button>;
+    return (
+      <Button onClick={enter} loading={isValidatingPresence}>
+        Verify Loot to Enter
+      </Button>
+    );
   }
 
   return (
@@ -112,9 +148,11 @@ export function JoinPage({ title }: { title: string }) {
       <Box css={{ col: true, sy: '$8' }}>
         <Title css={{ textAlign: 'center' }}>{title}</Title>
         <Paragraph css={{ color: 'gray', textAlign: 'center' }}>
-          Join the {title} Community.
+          Join the {title} Discord.
         </Paragraph>
       </Box>
+
+      {error && <ErrorText>{error.message}</ErrorText>}
 
       <Box css={{ col: true, sy: '$2' }}>{renderPrimaryAction()}</Box>
     </Box>
