@@ -1,4 +1,3 @@
-import { ServerIDForSlug } from '@lib/server/roles';
 import { GetServerSideProps } from 'next';
 import { ComponentPropsWithoutRef, useMemo, useCallback } from 'react';
 import { useWallet } from '@gimmixorg/use-wallet';
@@ -11,6 +10,7 @@ import { Button } from '@app/components/Button';
 import { Box } from '@app/components/Box';
 import { Paragraph, Title } from '@app/components/Typography';
 import { useRouter } from 'next/dist/client/router';
+import { AllCollections } from '@lib/collections/AllCollections';
 
 const WALLET_CONNECT_OPTIONS: Partial<ICoreOptions> = {
   providerOptions: {
@@ -128,12 +128,13 @@ export const getServerSideProps: GetServerSideProps<
   { slug: string }
 > = async (ctx) => {
   ctx.res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
+
   const { slug } = ctx.params;
 
-  if (!ServerIDForSlug[slug]) return { notFound: true };
+  if (!AllCollections[slug]) return { notFound: true };
 
   if (slug === 'katana') return { props: { title: 'Katana Garden' } };
-  if (slug === 'lootwars') return { props: { title: 'Loot Wars' } };
+  if (slug === 'upgrade') return { props: { title: 'Upgrade Materials' } };
 
   return { props: { title: 'How did you get here?' } };
 };

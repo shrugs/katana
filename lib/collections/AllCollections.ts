@@ -2,8 +2,9 @@
 
 import { Collection } from './Collection';
 import { KatanaDiscordCollection } from './KatanaDiscordCollection';
+import { UpgradeMaterialsCollection } from './UpgradeMaterialsCollection';
 
 export const AllCollections: Record<string, Collection> = {
   katana: KatanaDiscordCollection,
-  // TODO: upgrades
+  upgrade: UpgradeMaterialsCollection,
 };
