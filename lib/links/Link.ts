@@ -27,7 +27,7 @@ const discordAccountForEthereumAccount = async (account: string) => {
 export class Link {
   constructor(public rule: Rule, public results: RuleResult[]) {}
 
-  async sync(account: string): Promise<void> {
+  async sync(account: string): Promise<boolean> {
     const desired = await this.rule.run(account);
 
     for (const result of this.results) {
@@ -50,5 +50,7 @@ export class Link {
         }
       }
     }
+
+    return desired;
   }
 }

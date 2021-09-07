@@ -16,11 +16,15 @@ export default async function sync(req: NextApiRequest, res: NextApiResponse) {
     where: { userId: session.user.id },
   });
 
-  await Promise.allSettled(
-    ethereumAccounts.flatMap((ethereumAccount) =>
-      collections.map((collection) => collection.syncForAccount(ethereumAccount.account)),
-    ),
-  );
+  try {
+    const results = await Promise.all(
+      ethereumAccounts.flatMap((ethereumAccount) =>
+        collections.map((collection) => collection.syncForAccount(ethereumAccount.account)),
+      ),
+    );
 
-  return res.json({ success: true });
+    return res.json({ results });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 }

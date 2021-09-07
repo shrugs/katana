@@ -12,6 +12,7 @@ import { Paragraph, Title } from '@app/elements/Typography';
 import { useRouter } from 'next/dist/client/router';
 import { AllCollections } from '@lib/collections/AllCollections';
 import { styled } from 'stitches.config';
+import { mutator } from '@lib/client/mutator';
 
 const ErrorText = styled(Paragraph, { color: 'Red' });
 
@@ -27,25 +28,9 @@ const WALLET_CONNECT_OPTIONS: Partial<ICoreOptions> = {
   theme: 'dark',
 };
 
-function doSync(body: { slug: string }) {
-  return fetch('/api/sync', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  });
-}
-
-function submitEthereumAccount(body: { account: string; signature: string }) {
-  return fetch('/api/addEthereumAccount', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  });
-}
+const doSync = (body: { slug: string }) => mutator<{ results: boolean[][] }>('/api/sync', body);
+const submitEthereumAccount = (body: { account: string; signature: string }) =>
+  mutator('/api/addEthereumAccount', body);
 
 export function JoinPage({ title }: { title: string }) {
   const router = useRouter();
@@ -81,18 +66,22 @@ export function JoinPage({ title }: { title: string }) {
 
   const [syncing, setLoading] = useState(false);
   const [syncError, setError] = useState<Error>();
+  const [results, setResults] = useState<boolean[][]>();
   const enter = useCallback(async () => {
     setError(undefined);
     setLoading(true);
     try {
-      await doSync({ slug });
+      const { results } = await doSync({ slug });
       mutatePresence();
+      setResults(results);
     } catch (error) {
       setError(error);
     } finally {
       setLoading(false);
     }
   }, [mutatePresence, slug]);
+
+  const passed = results?.some((result) => result.some(Boolean));
 
   const error = accountsError ?? presenceError ?? syncError;
 
@@ -120,8 +109,10 @@ export function JoinPage({ title }: { title: string }) {
     if (presenceData?.hasJoinedDestination) {
       return (
         <div>
-          <Paragraph css={{ textAlign: 'center' }}>You&apos;re in! Check Discord 👀</Paragraph>
-          <Button onClick={enter} loading={syncing} disabled={syncing}>
+          <Paragraph css={{ textAlign: 'center' }}>
+            {passed ? 'Refreshed!' : "You're in! Check Discord 👀"}
+          </Paragraph>
+          <Button onClick={enter} loading={syncing} disabled={syncing || passed}>
             Refresh your Roles
           </Button>
         </div>
