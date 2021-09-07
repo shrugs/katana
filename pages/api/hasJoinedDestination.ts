@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '@server/helpers/prisma';
+import prisma from '@lib/server/prisma';
 import { getSession } from 'next-auth/client';
-import { isInDiscord } from '@lib/server/presence';
-import { ServerIDForSlug } from '@lib/server/roles';
+import { AllCollections } from '@lib/collections/AllCollections';
+import { DiscordGuildMembershipResult } from '@lib/results/DiscordGuildMembershipResult';
 
 export default async function hasJoinedDestination(req: NextApiRequest, res: NextApiResponse) {
   const session = await getSession({ req });
@@ -18,8 +18,8 @@ export default async function hasJoinedDestination(req: NextApiRequest, res: Nex
     },
   });
 
-  const guildId = ServerIDForSlug[slug];
-  const hasJoinedDestination = await isInDiscord(guildId, account.providerAccountId);
+  const result = AllCollections[slug].links[0].results[0] as DiscordGuildMembershipResult;
+  const hasJoinedDestination = await result.isEnabled(account.providerAccountId);
 
   return res.json({ hasJoinedDestination });
 }

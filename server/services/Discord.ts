@@ -42,6 +42,7 @@ export const removeFromServer = async (guildId: string, userId: string) => {
 };
 
 export const getRolesForUser = async (guildId: string, userId: string) => {
+  console.log('fetching roles for user', guildId, userId);
   return discordFetch(`https://discord.com/api/v8/guilds/${guildId}/members/${userId}`, {
     method: 'GET',
   });

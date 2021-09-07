@@ -1,5 +1,4 @@
-import { syncForUser } from '@lib/server/sync';
-import prisma from '@server/helpers/prisma';
+import prisma from '@lib/server/prisma';
 import dayjs from 'dayjs';
 import { NextApiHandler } from 'next';
 
@@ -12,9 +11,11 @@ const api: NextApiHandler = async (_req, res) => {
     select: { id: true },
   });
 
-  for (const user of usersToRefresh) {
-    await syncForUser(user.id, 'katana');
-  }
+  // TODO: get the list of a user's subscribed collections, then run those
+
+  // for (const user of usersToRefresh) {
+  //   await syncForUser(user.id, 'katana');
+  // }
 
   return res.json({ success: true });
 };

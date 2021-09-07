@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '@server/helpers/prisma';
+import prisma from '@lib/server/prisma';
 import { getSession } from 'next-auth/client';
 
 export default async function getAccounts(req: NextApiRequest, res: NextApiResponse) {
@@ -8,7 +8,7 @@ export default async function getAccounts(req: NextApiRequest, res: NextApiRespo
 
   const accounts = await prisma.ethereumAccount.findMany({
     where: { userId: session.user.id },
-    select: { address: true },
+    select: { account: true },
   });
 
   return res.json({ accounts });

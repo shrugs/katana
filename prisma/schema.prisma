@@ -7,6 +7,24 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model User {
+  id String @id @default(cuid())
+
+  // (these are required for next auth)
+  name             String?
+  email            String?           @unique
+  emailVerified    DateTime?
+  image            String?
+  accounts         Account[]
+  sessions         Session[]
+  ethereumAccounts EthereumAccount[]
+
+  lastChecked DateTime @default(now())
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
 model Account {
   id                 String    @id @default(cuid())
   userId             String
@@ -24,7 +42,7 @@ model Account {
 }
 
 model EthereumAccount {
-  address String @id
+  account String @id
   proof   String
 
   userId String
@@ -40,22 +58,6 @@ model Session {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id])
-}
-
-model User {
-  id String @id @default(cuid())
-
-  lastChecked DateTime @default(now())
-
-  name            String?
-  email           String?           @unique
-  emailVerified   DateTime?
-  image           String?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  accounts        Account[]
-  sessions        Session[]
-  ethereumAccount EthereumAccount[]
 }
 
 model VerificationRequest {

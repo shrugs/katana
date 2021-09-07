@@ -25,7 +25,7 @@ const WALLET_CONNECT_OPTIONS: Partial<ICoreOptions> = {
 };
 
 function submitEnterDiscord(body: { slug: string }) {
-  return fetch('/api/verify', {
+  return fetch('/api/sync', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
