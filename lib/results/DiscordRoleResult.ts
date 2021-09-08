@@ -1,10 +1,14 @@
 import { getRolesForUser } from '@lib/repos/DiscordRoles';
 import { addRoleForUser, removeRoleForUser } from '@server/services/Discord';
-import { RuleResult, SetResultStateError } from './RuleResult';
+import { ResultDependency, RuleResult, SetResultStateError } from './RuleResult';
 
 export class DiscordRoleResult extends RuleResult {
   constructor(private guildId: string, private roleId: string, description: string) {
     super(description);
+  }
+
+  getDependencies(): ResultDependency[] {
+    return [ResultDependency.Discord];
   }
 
   async isValid(): Promise<boolean> {

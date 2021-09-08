@@ -6,6 +6,12 @@
       "@app/*": [
         "app/*"
       ],
+      "@elements/*": [
+        "elements/*"
+      ],
+      "@containers/*": [
+        "containers/*"
+      ],
       "@lib/*": [
         "lib/*"
       ],

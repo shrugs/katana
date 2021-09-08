@@ -18,16 +18,27 @@ model User {
   accounts         Account[]
   sessions         Session[]
   ethereumAccounts EthereumAccount[]
+  telegramAccount  TelegramAccount?
 
   lastChecked DateTime @default(now())
 
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TelegramAccount {
+  id   String @id
+  hash String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Account {
   id                 String    @id @default(cuid())
-  userId             String
   providerType       String
   providerId         String
   providerAccountId  String
@@ -36,6 +47,7 @@ model Account {
   accessTokenExpires DateTime?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
+  userId             String
   user               User      @relation(fields: [userId], references: [id])
 
   @@unique([providerId, providerAccountId])

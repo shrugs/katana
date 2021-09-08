@@ -13,3 +13,5 @@ export const Paragraph = styled('p', {
   fontFamily: '$sans',
   lineHeight: '$base',
 });
+
+export const ErrorText = styled(Paragraph, { color: 'Red' });

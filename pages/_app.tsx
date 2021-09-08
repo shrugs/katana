@@ -8,6 +8,7 @@ import { PropsWithChildren } from 'react';
 import { SWRConfig } from 'swr';
 import { fetcher } from '@lib/client/fetcher';
 import Head from 'next/head';
+import { DependencyState } from '@containers/DependencyState';
 
 type KatanaAppProps = AppProps<{}>;
 
@@ -16,6 +17,7 @@ const Layout = nest([
   ({ children, pageProps }: PropsWithChildren<Pick<KatanaAppProps, 'pageProps'>>) => (
     <NextAuthProvider session={pageProps.session}>{children}</NextAuthProvider>
   ),
+  DependencyState.Provider,
   MainLayout,
 ]);
 

@@ -13,11 +13,9 @@ export const Button = styled('button', {
   marginTop: '20px',
   border: 'none',
   outline: 'none',
-  color: 'white',
   fontFamily: '$serif',
   fontSize: '18px',
   cursor: 'pointer',
-  backgroundColor: 'hsl(203, 18%, 19%)',
   textDecoration: 'none',
   padding: '10px 20px',
   borderRadius: '5px',
@@ -28,6 +26,16 @@ export const Button = styled('button', {
   },
 
   variants: {
+    variant: {
+      normal: {
+        backgroundColor: '$discord',
+        color: 'white',
+      },
+      discord: {
+        backgroundColor: 'rgb(88, 101, 242)',
+        color: '$white',
+      },
+    },
     loading: {
       true: {
         '&::after': {
@@ -41,5 +49,9 @@ export const Button = styled('button', {
         },
       },
     },
+  },
+
+  defaultVariants: {
+    variant: 'normal',
   },
 });

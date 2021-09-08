@@ -1,9 +1,13 @@
 import { addToServer, getFromServer, removeFromServer } from '@server/services/Discord';
-import { RuleResult, SetResultStateError } from './RuleResult';
+import { RuleResult, SetResultStateError, ResultDependency } from './RuleResult';
 
 export class DiscordGuildMembershipResult extends RuleResult {
   constructor(private guildId: string, description: string) {
     super(description);
+  }
+
+  getDependencies(): ResultDependency[] {
+    return [ResultDependency.Discord];
   }
 
   async isValid(): Promise<boolean> {

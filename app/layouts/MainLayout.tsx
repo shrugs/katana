@@ -6,6 +6,7 @@ const Container = styled('div', {
   justifyContent: 'center',
   alignItems: 'center',
   height: '$screenh',
+  bg: '$bg',
 });
 
 const Main = styled('main', {
@@ -16,6 +17,7 @@ const Main = styled('main', {
   maxHeight: '100%',
   rounded: '$xl',
   shadow: '$xl',
+  bg: '$white',
 
   display: 'flex',
   flexDirection: 'row',

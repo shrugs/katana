@@ -1,4 +1,4 @@
-import { Box } from '@app/elements/Box';
+import { Box } from '@elements/Box';
 import { useWallet } from '@gimmixorg/use-wallet';
 import { SIGNATURE_TEXT } from '@lib/constants';
 import WalletConnectProvider from '@walletconnect/web3-provider';
