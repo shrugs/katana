@@ -28,7 +28,14 @@ export const getAmuletsForAccount = (account: string): Promise<AmuletMetadata[]>
         owner: account,
       });
 
-      return pMap(assets, getAmuletMetadata, { concurrency: 2 });
+      return pMap(
+        assets,
+        async (asset) => {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          return getAmuletMetadata(asset);
+        },
+        { concurrency: 1 },
+      );
     });
   }
 
