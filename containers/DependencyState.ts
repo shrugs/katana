@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { createContainer } from 'unstated-next';
 
 function useDependencyState() {
-  const [session, loadingSession] = useSession();
+  const [session] = useSession();
   const {
     data: dependencyStateData,
     error: dependencyStateError,

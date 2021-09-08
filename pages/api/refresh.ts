@@ -1,21 +1,18 @@
 import prisma from '@lib/server/prisma';
+import { syncSubscription } from '@lib/server/sync';
 import dayjs from 'dayjs';
 import { NextApiHandler } from 'next';
+import pMap from 'p-map';
 
 const api: NextApiHandler = async (_req, res) => {
-  const usersToRefresh = await prisma.user.findMany({
-    where: {
-      accounts: { some: { providerType: 'discord' } },
-      lastChecked: { lt: dayjs().subtract(1, 'minute').toDate() },
-    },
-    select: { id: true },
+  const subscriptions = await prisma.subscription.findMany({
+    where: { lastSynced: { lt: dayjs().subtract(1, 'minute').toDate() } },
+    select: { userId: true, collectionId: true },
   });
 
-  // TODO: get the list of a user's subscribed collections, then run those
-
-  // for (const user of usersToRefresh) {
-  //   await syncForUser(user.id, 'katana');
-  // }
+  await pMap(subscriptions, (sub) => syncSubscription(sub.userId, sub.collectionId), {
+    concurrency: 2,
+  });
 
   return res.json({ success: true });
 };

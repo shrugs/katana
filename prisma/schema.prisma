@@ -19,8 +19,31 @@ model User {
   sessions         Session[]
   ethereumAccounts EthereumAccount[]
   telegramAccount  TelegramAccount?
+  subscriptions    Subscription[]
 
-  lastChecked DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subscription {
+  id String @id @default(cuid())
+
+  lastSynced DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id])
+
+  @@unique([userId, collectionId])
+}
+
+model Collection {
+  id   String @id @default(cuid())
+  slug String @unique
+
+  subscriptions Subscription[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

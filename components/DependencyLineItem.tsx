@@ -53,7 +53,7 @@ function ConnectAccountButton({ fulfilled, loading }: { fulfilled: boolean; load
   }, [account, provider, refetchEthereumAccount]);
 
   if (fulfilled) {
-    return <Button disabled>Ethereum Connected!</Button>;
+    return <Button disabled>Ethereum Connected 👍</Button>;
   }
 
   if (!account) {
@@ -103,7 +103,7 @@ export function DependencyLineItem({ dependency }: { dependency: ResultDependenc
                 disabled={fulfilled}
                 loading={loading}
               >
-                {fulfilled ? 'Discord Connected!' : 'Sign in with Discord'}
+                {fulfilled ? 'Discord Connected 👍' : 'Sign in with Discord'}
               </Button>
             );
           case ResultDependency.Telegram:
