@@ -9,16 +9,19 @@ export const Button = styled('button', {
   overflow: 'hidden',
 
   textAlign: 'center',
-  width: '$full',
-  marginTop: '20px',
-  border: 'none',
   outline: 'none',
-  fontFamily: '$serif',
-  fontSize: '18px',
+  fontFamily: '$sans',
+  fontSize: '$lg',
   cursor: 'pointer',
-  textDecoration: 'none',
-  padding: '10px 20px',
-  borderRadius: '5px',
+  py: '$2',
+  px: '$4',
+  rounded: '$default',
+
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  sx: '$2',
 
   '&[disabled]': {
     opacity: '50%',
@@ -28,11 +31,11 @@ export const Button = styled('button', {
   variants: {
     variant: {
       normal: {
-        backgroundColor: '$discord',
+        backgroundColor: '$black',
         color: 'white',
       },
       discord: {
-        backgroundColor: 'rgb(88, 101, 242)',
+        backgroundColor: '$discord',
         color: '$white',
       },
     },
@@ -47,6 +50,11 @@ export const Button = styled('button', {
           animation: `${shimmer} 5s infinite`,
           content: '',
         },
+      },
+    },
+    wide: {
+      true: {
+        width: '$full',
       },
     },
   },

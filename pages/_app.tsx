@@ -9,6 +9,7 @@ import { SWRConfig } from 'swr';
 import { fetcher } from '@lib/client/fetcher';
 import Head from 'next/head';
 import { DependencyState } from '@containers/DependencyState';
+import { InitialRender } from '@containers/InitialRender';
 
 type KatanaAppProps = AppProps<{}>;
 
@@ -18,6 +19,7 @@ const Layout = nest([
     <NextAuthProvider session={pageProps.session}>{children}</NextAuthProvider>
   ),
   DependencyState.Provider,
+  InitialRender.Provider,
   MainLayout,
 ]);
 

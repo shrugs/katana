@@ -1,7 +1,14 @@
+import {
+  addToChannel,
+  ChannelInfo,
+  isInChannel,
+  removeFromChannel,
+  UserInfo,
+} from '@server/services/Telegram';
 import { RuleResult, SetResultStateError, ResultDependency } from './RuleResult';
 
 export class TelegramChannelMembershipResult extends RuleResult {
-  constructor(private channelId: string, private hash: string, description: string) {
+  constructor(private channel: ChannelInfo, description: string) {
     super(description);
   }
 
@@ -13,32 +20,22 @@ export class TelegramChannelMembershipResult extends RuleResult {
     return true;
   }
 
-  async isEnabled(userId: string, hash: string): Promise<boolean> {
-    return await this.isInChannel(userId, hash);
+  async isEnabled(user: UserInfo): Promise<boolean> {
+    return await isInChannel(this.channel, user);
   }
 
-  async setState(
-    enabled: boolean,
-    { userId, hash }: { userId: string; hash: string },
-  ): Promise<void> {
-    console.log(`${enabled ? 'Adding' : 'Removing'} user ${userId} to/from ${this.channelId}.`);
+  async setState(enabled: boolean, user: UserInfo): Promise<void> {
+    console.log(
+      `${enabled ? 'Adding' : 'Removing'} user ${user.userId} to/from ${this.channel.channelId}.`,
+    );
     try {
       if (enabled) {
-        // await addToServer(this.guildId, userId, accessToken);
+        await addToChannel(this.channel, user);
       } else {
-        // await removeFromServer(this.guildId, userId);
+        await removeFromChannel(this.channel, user);
       }
     } catch (error) {
       throw new SetResultStateError(error);
-    }
-  }
-
-  private async isInChannel(userId: string, hash: string) {
-    try {
-      // await getFromServer(this.guildId, discordId);
-      return true;
-    } catch (error) {
-      return false;
     }
   }
 }

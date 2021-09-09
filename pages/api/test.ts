@@ -1,32 +1,37 @@
 import { KatanaDiscordCollection } from '@lib/collections/KatanaDiscordCollection';
 import { getAmuletsForAccount } from '@lib/repos/Amulets';
 import { isValidUpgradeMaterial, toValidUpgradeMaterial } from '@lib/UpgradeMaterials';
-import { getChannelInfo, isInChannel, sendMessage } from '@server/services/Telegram';
+import {
+  addToChannel,
+  exportInvite,
+  getChannelInfo,
+  getUserInfo,
+  isInChannel,
+  removeFromChannel,
+  sendMessage,
+} from '@server/services/Telegram';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const valid = [
-  `Dawn Star Fragment (Pure)`,
-  `Dawn Star Fragment (Pure), 1`,
-  `Umbral Raven's Feathers (Esoteric), 201`,
-  'Star Fragment',
-];
-const invalid = ['whatever, 1'];
+const CHANNEL_INFO = { channelId: 1577653326, accessHash: '-263672753778771138' };
+const MY_INFO = {
+  userId: 397222621,
+  accessHash: '8733306531727977696',
+};
+const MATTS_INFO = {
+  userId: 913097002,
+  accessHash: '2193018302896323425',
+};
 
 export default async function test(req: NextApiRequest, res: NextApiResponse) {
   // const assets = await getAmuletsForAccount('0xEC6d36A487d85CF562B7b8464CE8dc60637362AC');
   // await KatanaDiscordCollection.syncForAccount('0xEC6d36A487d85CF562B7b8464CE8dc60637362AC');
-  // valid.forEach((poem) => {
-  //   console.log('valid?', poem, toValidUpgradeMaterial(poem));
-  // });
 
-  // invalid.forEach((poem) => {
-  //   console.log('invalid?', poem, toValidUpgradeMaterial(poem));
-  // });
-
-  const info = await getChannelInfo('fuuuusjsbxbxks');
-  console.log(info);
-
-  const response = await sendMessage(info, 'hello there');
+  // const mattS = await getUserInfo('matthewstephenson');
+  // console.log(mattS, MATTS_INFO);
+  // // const response = await addToChannel(CHANNEL_INFO, MY_INFO);
+  // // const response = await addToChannel(CHANNEL_INFO, MATTS_INFO);
+  // const response = await removeFromChannel(CHANNEL_INFO, MATTS_INFO);
+  // console.log(response);
 
   return res.json({ done: true });
 }

@@ -2,6 +2,7 @@ import { memoSingleton } from '@lib/repos/MemoSingleton';
 import { Api, TelegramClient } from 'telegram';
 import { MemorySession } from 'telegram/sessions';
 import BigInteger from 'big-integer';
+import { EntityLike } from 'telegram/define';
 
 export interface ChannelInfo {
   channelId: number;
@@ -48,14 +49,16 @@ export async function getChannelInfo(username: string): Promise<ChannelInfo> {
   return { channelId: channel.id, accessHash: channel.accessHash.toString() };
 }
 
-export async function addToChannel(channel: ChannelInfo, user: UserInfo) {
+export async function getUserInfo(username: string): Promise<UserInfo> {
   const client = await getBotClient();
-  return await client.invoke(
-    new Api.channels.InviteToChannel({
-      channel: toApiChannel(channel),
-      users: [toApiUser(user)],
-    }),
-  );
+  const response = await client.invoke(new Api.contacts.ResolveUsername({ username }));
+  const user = response.users[0] as Api.User;
+  return { userId: user.id, accessHash: user.accessHash.toString() };
+}
+
+export async function addToChannel(channel: ChannelInfo, user: UserInfo) {
+  const invite = await exportInvite(channel);
+  await sendMessage(toApiUser(user), invite.link);
 }
 
 export async function removeFromChannel(channel: ChannelInfo, participant: UserInfo) {
@@ -70,17 +73,37 @@ export async function removeFromChannel(channel: ChannelInfo, participant: UserI
   );
 }
 
-export async function sendMessage(peer: ChannelInfo, message: string) {
+export async function sendMessage(peer: EntityLike, message: string) {
   const client = await getBotClient();
   return await client.invoke(
     new Api.messages.SendMessage({
-      peer: toApiChannel(peer),
+      peer,
       message,
     }),
   );
 }
 
-export async function isInChannel(channel: Api.InputChannel, participant: Api.InputUser) {
+export async function exportInvite(peer: ChannelInfo) {
   const client = await getBotClient();
-  return await client.invoke(new Api.channels.GetParticipant({ channel, participant }));
+  return await client.invoke(
+    new Api.messages.ExportChatInvite({
+      peer: toApiChannel(peer),
+    }),
+  );
+}
+
+export async function isInChannel(channel: ChannelInfo, participant: UserInfo) {
+  const client = await getBotClient();
+  try {
+    // throws if not in chat
+    await client.invoke(
+      new Api.channels.GetParticipant({
+        channel: toApiChannel(channel),
+        participant: toApiUser(participant),
+      }),
+    );
+    return true;
+  } catch (error) {
+    return false;
+  }
 }

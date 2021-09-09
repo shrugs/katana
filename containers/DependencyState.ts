@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { createContainer } from 'unstated-next';
 
 function useDependencyState() {
-  const [session] = useSession();
+  const [session, loadingSession] = useSession();
   const {
     data: dependencyStateData,
     error: dependencyStateError,
@@ -24,19 +24,23 @@ function useDependencyState() {
       [ResultDependency.Discord]: dependencyStateError,
       [ResultDependency.Telegram]: dependencyStateError,
       ethereum: ethereumAccountError,
+      session: undefined,
     },
     loadingStates: {
       [ResultDependency.Discord]: loadingDependencyState,
       [ResultDependency.Telegram]: loadingDependencyState,
       ethereum: loadingEthereumAccount,
+      session: loadingSession,
     },
     dependencyStates: {
       [ResultDependency.Discord]: false,
       [ResultDependency.Telegram]: false,
       ...dependencyStateData,
       ethereum: ethereumAccountData?.hasEthereumAccount ?? false,
+      session: !!session,
     },
     refetchEthereumAccount,
+    refetchDependencyState,
   };
 }
 

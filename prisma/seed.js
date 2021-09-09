@@ -14,6 +14,12 @@ async function main() {
     create: { slug: 'upgrade' },
     update: {},
   });
+
+  await prisma.collection.upsert({
+    where: { slug: 'oneofthemanytelegrams' },
+    create: { slug: 'oneofthemanytelegrams' },
+    update: {},
+  });
 }
 
 main()

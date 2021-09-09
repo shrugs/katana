@@ -1,9 +1,8 @@
 import { GetServerSideProps } from 'next';
-import { ComponentPropsWithoutRef, useCallback, useMemo, useState } from 'react';
+import { ComponentPropsWithoutRef, useCallback, useState } from 'react';
 import { Button } from '@elements/Button';
 import { Box } from '@elements/Box';
 import { ErrorText, Paragraph, Title } from '@elements/Typography';
-import { useRouter } from 'next/dist/client/router';
 import { AllCollections } from '@lib/collections/AllCollections';
 import { mutator } from '@lib/client/mutator';
 import { uniq } from 'lodash';
@@ -11,7 +10,6 @@ import { DependencyLineItem } from 'components/DependencyLineItem';
 import { DependencyState } from '@containers/DependencyState';
 import { CollectionDependency } from '@lib/collections/Collection';
 import prisma from '@lib/server/prisma';
-import useSWR from 'swr';
 import { useSubscription } from '@lib/useSubscription';
 
 const doSync = (body: { collectionId: string }) =>
@@ -69,12 +67,7 @@ export function CollectionPage({
       }}
     >
       <Box css={{ col: true, sy: '$8' }}>
-        <Box css={{ col: true, sy: '$4' }}>
-          <Title css={{ textAlign: 'center' }}>{title}</Title>
-          <Paragraph css={{ color: 'gray', textAlign: 'center' }}>
-            Join the {title} Discord.
-          </Paragraph>
-        </Box>
+        <Title css={{ textAlign: 'center' }}>{title}</Title>
 
         <Box css={{ col: true, sy: '$4' }}>
           {dependencies.map((dep) => (
@@ -123,6 +116,7 @@ export const getServerSideProps: GetServerSideProps<
   if (!collection) return { notFound: true };
 
   const dependencies: CollectionDependency[] = [
+    'session',
     ...uniq(
       AllCollections[collection.slug].links
         .flatMap((link) => link.results)
@@ -134,7 +128,12 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       collectionId: collection.id,
-      title: collection.slug === 'katana' ? 'Katana Discord' : 'Upgrade Materials',
+      title:
+        collection.slug === 'katana'
+          ? 'Katana Discord'
+          : collection.slug === 'upgrade'
+          ? 'Upgrade Materials'
+          : 'one of the many telegrams',
       dependencies,
     },
   };

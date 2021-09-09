@@ -2,7 +2,7 @@ import { Link } from '@lib/links/Link';
 import { ResultDependency } from '@lib/results/RuleResult';
 import pMap from 'p-map';
 
-export type CollectionDependency = ResultDependency | 'ethereum';
+export type CollectionDependency = ResultDependency | 'ethereum' | 'session';
 
 export class Collection {
   constructor(public links: Link[]) {}

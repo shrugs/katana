@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/client';
 import { useCallback, useMemo } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { mutator } from './client/mutator';
@@ -8,12 +9,13 @@ const doUnsubscribe = (body: { collectionId: string }) =>
 
 export function useSubscription(collectionId: string) {
   const { mutate } = useSWRConfig();
+  const [session] = useSession();
 
   const subscriptionBody = useMemo(() => ({ collectionId }), [collectionId]);
   const key = useMemo(() => ['/api/subscription', subscriptionBody], [subscriptionBody]);
 
   const { data, error, isValidating } = useSWR<{ subscription: { id: string } }, Error>(
-    collectionId && key,
+    session && collectionId && key,
   );
 
   const isSubscribed = !!data?.subscription;

@@ -1,8 +1,10 @@
 import { DiscordGuildMembershipResult } from '@lib/results/DiscordGuildMembershipResult';
 import { DiscordRoleResult } from '@lib/results/DiscordRoleResult';
 import { MissingResultDependency, RuleResult } from '@lib/results/RuleResult';
+import { TelegramChannelMembershipResult } from '@lib/results/TelegramChannelMembershipResult';
 import { Rule } from '@lib/rules/Rule';
 import prisma from '@lib/server/prisma';
+import { UserInfo } from '@server/services/Telegram';
 
 const discordAccountForEthereumAccount = async (account: string) => {
   const discordAccount = await prisma.account.findFirst({
@@ -22,6 +24,25 @@ const discordAccountForEthereumAccount = async (account: string) => {
   }
 
   return discordAccount;
+};
+
+const telegramAccountForEthereumAccount = async (account: string): Promise<UserInfo> => {
+  const telegramAccount = await prisma.telegramAccount.findFirst({
+    where: {
+      user: {
+        ethereumAccounts: {
+          some: { account },
+        },
+      },
+    },
+    select: { id: true, hash: true },
+  });
+
+  if (telegramAccount === null) {
+    throw new MissingResultDependency(new Error(`Telegram account for ${account} not found.`));
+  }
+
+  return { userId: telegramAccount.id, accessHash: telegramAccount.hash };
 };
 
 export class Link {
@@ -47,6 +68,14 @@ export class Link {
         const current = await result.isEnabled(userId);
         if (current != desired) {
           await result.setState(desired, { userId });
+        }
+      }
+
+      if (result instanceof TelegramChannelMembershipResult) {
+        const user = await telegramAccountForEthereumAccount(account);
+        const current = await result.isEnabled(user);
+        if (current != desired) {
+          await result.setState(desired, user);
         }
       }
     }

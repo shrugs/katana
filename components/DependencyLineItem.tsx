@@ -6,11 +6,12 @@ import { requestSignature } from '@lib/client/requestSignature';
 import { useWallet } from '@gimmixorg/use-wallet';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import type { ICoreOptions } from 'web3modal';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { mutator } from '@lib/client/mutator';
 import { DependencyState } from '@containers/DependencyState';
 import { CollectionDependency } from '@lib/collections/Collection';
 import { signIn, useSession } from 'next-auth/client';
+import SignInWidget from './SignInWidget';
 
 const WALLET_CONNECT_OPTIONS: Partial<ICoreOptions> = {
   providerOptions: {
@@ -26,6 +27,8 @@ const WALLET_CONNECT_OPTIONS: Partial<ICoreOptions> = {
 
 function renderText(dep: CollectionDependency) {
   switch (dep) {
+    case 'session':
+      return `Katana Garden account required.`;
     case 'ethereum':
       return `Ethereum address required.`;
     case ResultDependency.Discord:
@@ -39,9 +42,9 @@ const submitEthereumAccount = (body: { account: string; signature: string }) =>
   mutator('/api/addEthereumAccount', body);
 
 function ConnectAccountButton({ fulfilled, loading }: { fulfilled: boolean; loading: boolean }) {
-  const { refetchEthereumAccount } = DependencyState.useContainer();
   const [session] = useSession();
   const canConnectAccount = !!session;
+  const { refetchEthereumAccount } = DependencyState.useContainer();
 
   const { connect, provider, account } = useWallet();
 
@@ -75,7 +78,52 @@ function ConnectAccountButton({ fulfilled, loading }: { fulfilled: boolean; load
   );
 }
 
-export function DependencyLineItem({ dependency }: { dependency: ResultDependency | 'ethereum' }) {
+const doAddTelegramAccount = (body: { username: string }) =>
+  mutator<{ results: boolean[][] }>('/api/addTelegramAccount', body);
+
+function TelegramLoginWidget({ fulfilled, loading }: { fulfilled: boolean; loading: boolean }) {
+  const { refetchDependencyState } = DependencyState.useContainer();
+  const ref = useRef<HTMLDivElement>();
+  const [session] = useSession();
+  const canConnectTelegram = !!session;
+
+  const handleUser = useCallback(
+    async (user) => {
+      await doAddTelegramAccount({ username: user.username });
+      refetchDependencyState();
+    },
+    [refetchDependencyState],
+  );
+
+  useEffect(() => {
+    (window as any).TelegramLoginWidget = { dataOnauth: handleUser };
+
+    const script = document.createElement('script');
+    script.src = 'https://telegram.org/js/telegram-widget.js?15';
+    script.setAttribute('data-telegram-login', 'katanagardenbot');
+    script.setAttribute('data-size', 'large');
+    script.setAttribute('data-radius', '15');
+    script.setAttribute('data-request-access', 'write');
+    script.setAttribute('data-lang', 'en-US');
+    script.setAttribute('data-onauth', 'TelegramLoginWidget.dataOnauth(user)');
+    script.async = true;
+    ref.current.appendChild(script);
+  }, [handleUser]);
+
+  const disabled = !canConnectTelegram || fulfilled || loading;
+
+  return (
+    <Box
+      ref={ref}
+      css={{
+        pointerEvents: disabled ? 'none' : 'all',
+        opacity: disabled ? '50%' : '100%',
+      }}
+    />
+  );
+}
+
+export function DependencyLineItem({ dependency }: { dependency: CollectionDependency }) {
   const { dependencyStates, loadingStates, errors } = DependencyState.useContainer();
   const fulfilled = dependencyStates[dependency];
   const loading = loadingStates[dependency];
@@ -93,6 +141,8 @@ export function DependencyLineItem({ dependency }: { dependency: ResultDependenc
       </Paragraph>
       {(() => {
         switch (dependency) {
+          case 'session':
+            return <SignInWidget fulfilled={fulfilled} loading={loading} />;
           case 'ethereum':
             return <ConnectAccountButton fulfilled={fulfilled} loading={loading} />;
           case ResultDependency.Discord:
@@ -107,15 +157,7 @@ export function DependencyLineItem({ dependency }: { dependency: ResultDependenc
               </Button>
             );
           case ResultDependency.Telegram:
-            return (
-              <script
-                src="https://telegram.org/js/telegram-widget.js?15"
-                data-telegram-login="katanagardenbot"
-                data-size="large"
-                data-auth-url="https://localhost:3000/api/auth/telegram?returnto=/"
-                async
-              />
-            );
+            return <TelegramLoginWidget fulfilled={fulfilled} loading={loading} />;
         }
       })()}
       {error && <ErrorText>{error.message}</ErrorText>}

@@ -79,10 +79,10 @@ const sizes = {
 export const { styled, css, globalCss, keyframes, getCssText, theme } = createStitches({
   theme: {
     colors: {
-      black: '#000000',
+      black: '#23272A',
       white: '#FFFFFF',
       gray: '#646a78',
-      discord: 'hsl(203, 18%, 19%)',
+      discord: '#7289DA',
       bg: '#262626',
     },
     space,

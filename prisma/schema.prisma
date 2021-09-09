@@ -50,7 +50,7 @@ model Collection {
 }
 
 model TelegramAccount {
-  id   String @id
+  id   Int
   hash String
 
   userId String
@@ -58,6 +58,8 @@ model TelegramAccount {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@id([id, hash])
 }
 
 model Account {
