@@ -15,6 +15,7 @@ export class SetResultStateError extends RuleResultError {
 export enum ResultDependency {
   Discord,
   Telegram,
+  Email,
 }
 
 export class RuleResult {

@@ -33,6 +33,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "swr": "^1.0.0",
+    "telegram": "^1.8.10",
     "unstated-next": "^1.1.0",
     "zustand": "^3.5.10"
   },
