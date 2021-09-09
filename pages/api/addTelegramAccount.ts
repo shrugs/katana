@@ -12,6 +12,7 @@ export default async function addTelegramAccount(req: NextApiRequest, res: NextA
   if (!username) return res.status(400).json({ message: 'Missing telegram username.' });
 
   // TODO: verify telegram payload
+  // https://core.telegram.org/widgets/login
 
   const user = await getUserInfo(username);
 

@@ -13,7 +13,7 @@ export async function syncSubscription(userId: string, collectionId: string) {
 
   return await Promise.all(
     ethereumAccounts.flatMap((ethereumAccount) =>
-      AllCollections[slug].syncForAccount(ethereumAccount.account),
+      AllCollections[slug].sync(ethereumAccount.account),
     ),
   );
 }

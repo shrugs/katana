@@ -48,6 +48,10 @@ const telegramAccountForEthereumAccount = async (account: string): Promise<UserI
 export class Link {
   constructor(public rule: Rule, public results: RuleResult[]) {}
 
+  async test(account: string): Promise<boolean> {
+    return await this.rule.run(account);
+  }
+
   async sync(account: string): Promise<boolean> {
     const desired = await this.rule.run(account);
 

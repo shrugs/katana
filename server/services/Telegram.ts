@@ -1,8 +1,8 @@
-import { memoSingleton } from '@lib/repos/MemoSingleton';
 import { Api, TelegramClient } from 'telegram';
 import { MemorySession } from 'telegram/sessions';
 import BigInteger from 'big-integer';
 import { EntityLike } from 'telegram/define';
+import memoizee from 'memoizee';
 
 export interface ChannelInfo {
   channelId: number;
@@ -26,7 +26,7 @@ const toApiUser = ({ userId, accessHash }: UserInfo) =>
     accessHash: BigInteger(accessHash),
   });
 
-const getBotClient = memoSingleton(async () => {
+const getBotClient = memoizee(async () => {
   const session = new MemorySession();
 
   const client = new TelegramClient(
