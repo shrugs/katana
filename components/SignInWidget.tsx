@@ -20,9 +20,9 @@ export default function SignInWidget({
 
   return (
     <Box css={{ col: true, sy: '$2' }}>
-      <Button wide loading={loading} disabled={loading}>
+      {/* <Button wide loading={loading} disabled={loading}>
         Log In With Email
-      </Button>
+      </Button> */}
       <Button
         onClick={() => signIn('discord')}
         variant="discord"
