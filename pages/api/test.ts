@@ -29,7 +29,8 @@ export default async function test(req: NextApiRequest, res: NextApiResponse) {
   // await KatanaDiscordCollection.sync('0xEC6d36A487d85CF562B7b8464CE8dc60637362AC');
 
   // const mattS = await getUserInfo('matthewstephenson');
-  // console.log(mattS, MATTS_INFO);
+  // console.log(mattS, MATTS_INFO);s
+
   // // const response = await addToChannel(CHANNEL_INFO, MY_INFO);
   // // const response = await addToChannel(CHANNEL_INFO, MATTS_INFO);
   // const response = await removeFromChannel(CHANNEL_INFO, MATTS_INFO);
